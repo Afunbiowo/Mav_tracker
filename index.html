@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Corporate Task Tracker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo-container">
+                <i class="fas fa-tasks logo-icon"></i>
+                <h1>TaskFlow</h1>
+            </div>
+            <div class="header-controls">
+                <button id="add-task-btn" class="primary-btn">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+                <button id="notifications-btn" class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                    <span id="notification-badge" class="notification-badge hidden">0</span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <div class="dashboard">
+                <div class="metrics-container">
+                    <div class="metric-card">
+                        <h3>Total Tasks</h3>
+                        <p id="total-tasks">0</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Pending</h3>
+                        <p id="pending-tasks">0</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>In Progress</h3>
+                        <p id="in-progress-tasks">0</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Completed</h3>
+                        <p id="completed-tasks">0</p>
+                    </div>
+                </div>
+
+                <div class="search-filter">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Search tasks...">
+                    </div>
+                    <div class="filter-container">
+                        <select id="filter-status">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="task-board">
+                    <div class="task-column" id="pending-column">
+                        <div class="column-header">
+                            <h2>Pending</h2>
+                            <span class="task-count" id="pending-count">0</span>
+                        </div>
+                        <div class="task-list" id="pending-list"></div>
+                    </div>
+                    
+                    <div class="task-column" id="in-progress-column">
+                        <div class="column-header">
+                            <h2>In Progress</h2>
+                            <span class="task-count" id="in-progress-count">0</span>
+                        </div>
+                        <div class="task-list" id="in-progress-list"></div>
+                    </div>
+                    
+                    <div class="task-column" id="completed-column">
+                        <div class="column-header">
+                            <h2>Completed</h2>
+                            <span class="task-count" id="completed-count">0</span>
+                        </div>
+                        <div class="task-list" id="completed-list"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="add-task-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Task</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-task-form">
+                    <div class="form-group">
+                        <label for="task-title">Task Title</label>
+                        <input type="text" id="task-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">Description</label>
+                        <textarea id="task-description" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-deadline">Deadline</label>
+                        <input type="datetime-local" id="task-deadline">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">Priority</label>
+                        <select id="task-priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-assignee">Assignee</label>
+                        <input type="text" id="task-assignee">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-email">Notification Email</label>
+                        <input type="email" id="task-email" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="secondary-btn" id="cancel-add">Cancel</button>
+                        <button type="submit" class="primary-btn">Create Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Details Modal -->
+    <div id="task-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detail-task-title">Task Details</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="task-details">
+                    <div class="detail-group">
+                        <h3>Description</h3>
+                        <p id="detail-description"></p>
+                    </div>
+                    <div class="details-grid">
+                        <div class="detail-group">
+                            <h3>Status</h3>
+                            <div class="status-selector">
+                                <select id="detail-status">
+                                    <option value="pending">Pending</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="detail-group">
+                            <h3>Priority</h3>
+                            <p id="detail-priority"></p>
+                        </div>
+                        <div class="detail-group">
+                            <h3>Assignee</h3>
+                            <p id="detail-assignee"></p>
+                        </div>
+                        <div class="detail-group">
+                            <h3>Deadline</h3>
+                            <p id="detail-deadline"></p>
+                        </div>
+                        <div class="detail-group">
+                            <h3>Created On</h3>
+                            <p id="detail-created"></p>
+                        </div>
+                        <div class="detail-group" id="completion-time-container">
+                            <h3>Completion Time</h3>
+                            <p id="detail-completion-time"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-actions">
+                    <button id="delete-task-btn" class="danger-btn">Delete Task</button>
+                    <button id="update-task-btn" class="primary-btn">Update Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div id="notifications-panel" class="panel hidden">
+        <div class="panel-header">
+            <h2>Notifications</h2>
+            <button id="close-notifications" class="icon-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="panel-body">
+            <div id="notifications-list" class="notifications-list">
+                <!-- Notifications will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
